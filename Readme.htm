@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Faces2Keywords</title>
+<title>PicasaFaceImport</title>
 <style>
 <!--
 body {font-family: Calibri, Segoe UI, Arial, sans-serif}
@@ -8,27 +8,27 @@ body {font-family: Calibri, Segoe UI, Arial, sans-serif}
 </style>
 </head>
 <body>
-<h1>Faces2Keywords</h1>
-<p>© 2010 C.Y. Wong</p>
-<p>Faces2Keywords imports Contacts from Google Picasa (found using "face detection") into Adobe Photoshop Lightroom as Keywords.</p>
-<p>Visit the web site <a href="http://sites.google.com/site/mybyways/faces2keywords">http://sites.google.com/site/mybyways/faces2keywords</a> for more information. If you like Faces2Keywords, please consider a small donation to keep development going! Thanks!</p>
+<h1>PicasaFaceImport</h1>
+<p>© 2013 Franck Pernet</p>
+<p>PicasaFaceImport imports Contacts from Google Picasa (found using "face detection") into Adobe Photoshop Lightroom as Keywords.</p>
+<p>Visit the web site <a href="http://code.google.com/p/lr-picasafaceimport/">http://code.google.com/p/lr-picasafaceimport/</a> for more information.</p>
 <p>By installing this software, you agree to the license terms. This computer program is protected by copyright law.</p>
-<p><b>Version 1.0.0 (10 Nov 2010)</b> - first release</p>
+<p><b>Version 0.1.0 (Jan 2013)</b> - Beta</p>
 <h2>Installation Instructions</h2>
 <p>To install:<ol>
-<li>Unzip the folder <b>Faces2Keywords.lrplugin</b> using a tool like <a href="http://www.7-zip.org" target="_blank">7-zip</a></li>
+<li>Unzip the folder <b>PicasaFaceImport.lrplugin</b> using a tool like <a href="http://www.7-zip.org" target="_blank">7-zip</a></li>
 <li>Place the folder in folder of your choice, e.g.<ul>
 <li><code>C:\Program Files\Adobe\Adobe Photoshop Lightroom 3\</code></li>
 <li><code>C:\Documents and Settings\&lt;username&gt;\Application Data\Adobe\Lightroom\</code></li></ul></li>
 <li>From Lightroom, select the menu <b><u>F</u>ile &gt; Plug-in Manager...</b></li>
 <li>In the Plug-in Manager dialog, click the <b>Add</b> button</li>
-<li>Browse to the folder <b>Faces2Keywords.lrplugin</b> and click <b>Ok</b></li>
-<li>The Faces2Keywords Settings page will be displayed</li></ol></p>
+<li>Browse to the folder <b>PicasaFaceImport.lrplugin</b> and click <b>Ok</b></li>
+<li>The PicasaFaceImport Settings page will be displayed</li></ol></p>
 <p>To uninstall:<ol>
-<li>Select Faces2Keywords in the Plug-in Manager and click <b>Remove</b></li>
-<li>Delete the folder <b>Faces2Keywords.lrplugin</b></li></ol></p>
+<li>Select PicasaFaceImport in the Plug-in Manager and click <b>Remove</b></li>
+<li>Delete the folder <b>PicasaFaceImport.lrplugin</b></li></ol></p>
 <h2>Setup Instructions</h2>
-<p>Faces2Keywords will try to find Picasa's Contacts.xml file. Faces2Keywords cannot find this file automatically on non-English Windows or MacOS. Instead:<ul>
+<p>PicasaFaceImport will try to find Picasa's Contacts.xml file. PicasaFaceImport cannot find this file automatically on non-English Windows or MacOS. Instead:<ul>
 <li>Click the <b>...</b> button next to the <b>Picasa Contacts.xml</b> input field</li>
 <li>Navigate to the Contacts.xml file and click <b>Ok</b>, e.g.<ul>
 <li>On Windows XP, <code>C:\Documents and Settings\&lt;username&gt;Local Settings\Application Data\Google\Picasa2\contacts\contacts.xml</code></li>
@@ -38,20 +38,18 @@ body {font-family: Calibri, Segoe UI, Arial, sans-serif}
 <li>Select <b>Use Contact Nickname as Keyword Name</b> to use Picasa's nickname field as the Keyword Name, or</li>
 <li>Select <b>Use Contact Name as Keyword Name</b> to use Picasa's name field as the Keyword Name</li>
 <li>And optionally check <b>Use Contact Name/Nickname as Synonym</b> to use the other field (name or nickname) as the Keyword Synoynm</li></ul></p>
-<p>Faces2Keywords has been tested with:<ul>
-<li>Microsoft Windows XP</li>
-<li><a href="http://picasa.google.com" target="_blank">Google Picasa 3.8</a></li>
-<li>Adobe Photoshop Lightroom 3.0</li>
-<li><a href="http://www.lua.org" target="_blank">Lua 5.1.4</a></li></ul></p>
+<p>PicasaFaceImport has been tested with:<ul>
+<li>Microsoft Windows 7</li>
+<li><a href="http://picasa.google.com" target="_blank">Google Picasa 3.9.0</a></li>
+<li>Adobe Photoshop Lightroom 4.3</li>
 <h2>Usage Instructions</h2>
-<p>From Lightroom, select the menu <b><u>L</u>ibrary &gt; Plug-in Extra<u>s</u> &gt; Import from Folder of Selected Photo</b>, under the item <b><i>Faces2Keywords.</i></b></p>
-<p>Faces2Keywords will then:<ol>
+<p>From Lightroom, select the menu <b><u>L</u>ibrary &gt; Plug-in Extra<u>s</u> &gt; Import from Folder of Selected Photo</b>, under the item <b><i>PicasaFaceImport.</i></b></p>
+<p>PicasaFaceImport will then:<ol>
 <li>Create Keywords for each Picasa contact found in the Contacts.xml file (if not already created)</li>
 <li>Locate the folder of the selected photo</li>
 <li>Read the file <b>.picasa.ini</b> in that folder, with contains Picasa's "faces" metadata</li>
 <li>Tag the photos in that folder with Keywords for each contact, as found by Picasa's "face detection" feature</li></ol></p>
 <h2>Finally...</h2>
-<p>If you experience problems, do report them. Please download and install the Debug version of Faces2Keywords, as this version creates a log file. Send the log file <b>libraryLogger.log</b>, found in <b>My Documents</b>, to the developer, thanks!</p>
 <p>Do contribute any suggestions or feature requests, e.g. import of Captions, etc.</p>
 <h2>Disclaimer</h2>
 <p>All software or other information is provided "as is," without warranty of any kind express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. Downloading or using said sofware or information is at the user's own risk. The copyright owner accepts no responsibility whatsoever arising from the use or misuse of said software or information, and shall not be held liable for any claim, damages or other liabilities.</p>
