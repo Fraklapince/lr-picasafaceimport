@@ -208,9 +208,9 @@ local function getCurrentFolder()
     return locateFolder(photo:getFormattedMetadata("folderName"), cat:getFolders())
   end
 end
-local function Faces2Keywords()
+local function PicasaFaceImport()
   progress = LrProgressScope({
-    title = LOC("$$$/Progress/Title=Faces2Keywords")
+    title = LOC("$$$/Progress/TitlPicasaFaceImportds")
   })
   local folder = getCurrentFolder()	-- on ne passe que dans le folder courant ou le premier de l'arborescense
   LrDialogs.message("on ne parcours que:".. folder:getName() .." <br> on peut envisager de proposer de tout parcourir via un autre menu ou via une checkbox pour les sous dossiers")
@@ -229,10 +229,10 @@ end
 if contactsFile == nil or contactsFile == "" then
   do
     local LrDialogs = import("LrDialogs")
-    LrDialogs.message(LOC("$$$/Error/ContactsNotFoundTitle=Contacts.xml File Not Found!"), LOC("$$$/Error/ContactsNotFoundText=Faces2Keywords could not find Picasa's Contacts.xml.^r^rUse the Plug-in Manager to configure the location of this file."), "critical")
+    LrDialogs.message(LOC("$$$/Error/ContactsNotFoundTitle=Contacts.xml File Not Found!"), LOC("$$$/Error/ContactsNotFoundText=PicasaFaceImport could not find Picasa's Contacts.xml.^r^rUse the Plug-in Manager to configure the location of this file."), "critical")
   end
 else
-  log:trace("Start Faces2keywords")
+  log:trace("Start PicasaFaceImport")
   local LrTasks = import("LrTasks")
-  LrTasks.startAsyncTask(Faces2Keywords)
+  LrTasks.startAsyncTask(PicasaFaceImport)
 end

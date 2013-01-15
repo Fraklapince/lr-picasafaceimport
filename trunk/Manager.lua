@@ -76,7 +76,7 @@ return {
         }),
         f:row({
           f:static_text({
-            title = LOC("$$$/Settings/Instructions=To use Faces2Keywords, select a photo and choose the menu item^r Library > Plug-in Extras > Import from Folder of Selected Photo^r^rFaces2Keywords will:^r  1. Read the Contacts list from Picasa's Contacts.xml file,^r  2. Create a Keyword for each contact, under a Root Keyword defined below,^r  3. Read 'faces' metadata from .picasa.ini, located in the folder of the selected Photo,^r  5. Add contact Keywords to all Photos in the folder of the Selected Photo."),
+            title = LOC("$$$/Settings/Instructions=To use PicasaFaceImport, select a photo and choose the menu item^r Library > Plug-in Extras > Import from Folder of Selected Photo^r^rPicasaFaceImport will:^r  1. Read the Contacts list from Picasa's Contacts.xml file,^r  2. Create a Keyword for each contact, under a Root Keyword defined below,^r  3. Read 'faces' metadata from .picasa.ini, located in the folder of the selected Photo,^r  5. Add contact Keywords to all Photos in the folder of the Selected Photo."),
             height_in_lines = 1.2
           })
         }),
