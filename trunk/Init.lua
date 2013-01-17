@@ -7,12 +7,14 @@ function init()
   if prefs.rootKeyword == nil or prefs.rootKeyword == "" then
     prefs.rootKeyword = LOC("$$$/Prefs/DefaultRootKeyword=Contacts")
   end
+  --[[
   if type(prefs.contactsFromNickname) ~= "boolean" then
     prefs.contactsFromNickname = true
   end
   if type(prefs.createSynonym) ~= "boolean" then
     prefs.createSynonym = true
   end
+  ]]
   if prefs.contactsFile == nil or prefs.contactsFile == "" or LrFileUtils.exists(prefs.contactsFile) == false then
     prefs.contactsFile = nil
     local home = LrPathUtils.getStandardFilePath("home")

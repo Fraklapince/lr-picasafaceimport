@@ -14,11 +14,11 @@ return {
       file = "Help.lua"
     }
   },
-  LrPluginName = "$$$/Menu/PluginNameDebug=PicasaFaceImport (Debug-FP)",
+  LrPluginName = "$$$/Menu/PluginNameDebug=PicasaFaceImport",
   LrSdkVersion = 3,
   LrSdkMinimumVersion = 1.3,
   LrToolkitIdentifier = "com.mybyways.PicasaFaceImport",
-  LrPluginInfoUrl = "http://sites.google.com/site/mybyways/PicasaFaceImport",
+  LrPluginInfoUrl = "http://code.google.com/p/lr-picasafaceimport/",
   VERSION = {
     major = 1,
     minor = 0,

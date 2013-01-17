@@ -9,10 +9,12 @@ local bind = LrView.bind
 local LrLogger = import("LrLogger")
 local log = LrLogger("libraryLogger")
 log:enable("logfile")
+
 function observer(p, key, value)
   log:trace("Setting key " .. key .. " = " .. value)
   if key == "rootKeyword" then
     prefs.rootKeyword = value
+  --[[
   elseif key == "contactsFrom" then
     if value == "nickname" then
       p.createSynonymText = LOC("$$$/Settings/SynonymName=Use Contact Name as Keyword Synonym")
@@ -27,15 +29,18 @@ function observer(p, key, value)
     else
       prefs.createSynonym = false
     end
+  ]]
   elseif key == "contactsFile" then
     prefs.contactsFile = value
   end
 end
+
 return {
   sectionsForTopOfDialog = function(f, p)
     log:trace("Create view start")
     p.rootKeyword = prefs.rootKeyword
-    if prefs.contactsFromNickname == true then
+    --[[
+	if prefs.contactsFromNickname == true then
       p.contactsFrom = "nickname"
       p.createSynonymText = LOC("$$$/Settings/SynonymName=Use Contact Name as Keyword Synonym")
     else
@@ -47,20 +52,25 @@ return {
     else
       p.createSynonym = "0"
     end
+	]]
     p.contactsFile = prefs.contactsFile
     p:addObserver("rootKeyword", observer)
-    p:addObserver("contactsFrom", observer)
+    --[[
+	p:addObserver("contactsFrom", observer)
     p:addObserver("createSynonym", observer)
+	]]
     p:addObserver("contactsFile", observer)
     if p.rootKeyword ~= nil then
       log:trace("Preference rootKeyword = " .. p.rootKeyword)
     end
-    if p.contactsFrom ~= nil then
+	--[[
+	if p.contactsFrom ~= nil then
       log:trace("Preference contactsFrom = " .. p.contactsFrom)
     end
     if p.createSynonym ~= nil then
       log:trace("Preference createSynonym = " .. p.createSynonym)
     end
+	]]
     if p.contactsFile ~= nil then
       log:trace("Preference contactsFile = " .. p.contactsFile)
     end
@@ -89,7 +99,7 @@ return {
             fill_horizontal = 1,
             validate = function(view, value)
               log:trace("Validate Keyword " .. value)
-              p.contactsFromNickname = not contactsFromNickname
+              --p.contactsFromNickname = not contactsFromNickname
               value = LrStringUtils.trimWhitespace(value)
               if value == nil or value == "" then
                 return false, p.rootKeyword, LOC("$$$/Error/RootKeywordEmpty=The Root Keyword Tag cannot be empty.")
@@ -101,7 +111,8 @@ return {
             end
           })
         }),
-        f:row({
+        --[[
+		f:row({
           f:radio_button({
             title = LOC("$$$/Settings/RadioNickname=Use Contact Nickname as Keyword Name"),
             value = bind("contactsFrom"),
@@ -127,6 +138,7 @@ return {
             unchecked_value = "0"
           })
         }),
+		]]
         f:row({
           f:static_text({
             title = LOC("$$$/Settings/ContactsFile=Picasa Contacts.xml")
@@ -167,16 +179,18 @@ return {
             place_horizontal = 1,
             action = function(button)
               p.rootKeyword = LOC("$$$/Prefs/DefaultRootKeyword=Contacts")
-              p.contactsFrom = "nickname"
+              --[[
+			  p.contactsFrom = "nickname"
               p.createSynonym = "1"
+			  ]]
               p.contactsFile = nil
               local home = LrPathUtils.getStandardFilePath("home")
-              local find = {
-                LOC("$$$/Prefs/ContactsFile1=Local SettingsApplication DataGooglePicasa2contactscontacts.xml"),
-                LOC("$$$/Prefs/ContactsFile2=AppDataLocalGooglePicasa2contactscontacts.xml"),
-                LOC("$$$/Prefs/ContactsFile3=Library/Application Support/Google/Picasa2/contacts/contacts.xml"),
-                LOC("$$$/Prefs/ContactsFile4=Library/Application Support/Google/Picasa3/contacts/contacts.xml")
-              }
+			  local find = {
+				LOC("$$$/Prefs/ContactsFile1=Local Settings/Application Data/GooglePicasa2/contacts/contacts.xml"),
+				LOC("$$$/Prefs/ContactsFile2=AppData/Local/Google/Picasa2/contacts/contacts.xml"),
+				LOC("$$$/Prefs/ContactsFile3=Library/Application Support/Google/Picasa2/contacts/contacts.xml"),
+				LOC("$$$/Prefs/ContactsFile4=Library/Application Support/Google/Picasa3/contacts/contacts.xml")
+			  }
               for i = 1, #find do
                 local f = LrPathUtils.child(home, find[i])
                 if LrFileUtils.exists(f) == "file" then
