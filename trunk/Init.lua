@@ -15,6 +15,12 @@ function init()
     prefs.createSynonym = true
   end
   ]]
+  if type(prefs.UseSynonymForPicasaID) ~= "boolean" then
+    prefs.UseSynonymForPicasaID = true
+  end
+  
+  prefs.synonymIdLabelBase = LOC("$$$/Prefs/synonymIdLabelBase=picasaID:")
+  
   if prefs.contactsFile == nil or prefs.contactsFile == "" or LrFileUtils.exists(prefs.contactsFile) == false then
     prefs.contactsFile = nil
     local home = LrPathUtils.getStandardFilePath("home")

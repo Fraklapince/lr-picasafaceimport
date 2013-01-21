@@ -42,6 +42,21 @@ local function findKeywordName(root, childKeyword)
 	return childFounded
 end
 
+local function findKeywordIdInSynonym(root, id)
+	local n = root:getChildren()
+	local childFounded = nil
+	for i = 1, #n do
+		local childSynonym = n[i]:getSynonyms()
+		for j = 1, #childSynonym do
+			if childSynonym[j] == prefs.synonymIdLabelBase .. id then
+				LrDialogs.message( "cherché ".. id .."trouvé: ".. childSynonym[j] )
+				childFounded = n[i]
+			end
+		end
+	end
+	return childFounded
+end
+
 function readContacts(contactXMLFile)
   local contacts = {}
   local synonyms = {}
@@ -52,7 +67,9 @@ function readContacts(contactXMLFile)
     local root = LrXml.parseXml(file:read("*a"))
     if root:name() == "contacts" then
       --local contactsFromNickname = prefs.contactsFromNickname
-      for i = 1, root:childCount() do
+	  local useSynonymForPicasaID = prefs.UseSynonymForPicasaID
+      
+	  for i = 1, root:childCount() do
         local node = root:childAtIndex(i)
         if node:name() == "contact" then
           local attribs = node:attributes()
@@ -75,9 +92,12 @@ function readContacts(contactXMLFile)
 				synonyms[id] = ""
 			end
 			]]
-			synonyms[id] = "picasaID:".. attribs.id.value	-- use ID as synonym for future update
+		
+			if useSynonymForPicasaID == true then
+			  synonyms[id] = prefs.synonymIdLabelBase .. attribs.id.value	-- use ID as synonym for future update
+			end
           --end
-          log:trace("Contact " .. id .. " = " .. contacts[id] .. " (" .. synonyms[id] .. ")")
+          log:trace("Contact " .. id .. " = " .. contacts[id] .. " (ID: " .. synonyms[id] .. ")")
         end
       end
     end
@@ -93,7 +113,7 @@ function readPicasaIni(folder, keywords)
   local pp = #photos
   
   progress = LrProgressScope({
-    title = LOC("$$$/Progress/TitlPicasaFaceImportds")
+    title = LOC("$$$/Progress/Title=PicasaFaceImport")
   })
   
   progress:setPortionComplete(p, pp)
@@ -145,12 +165,16 @@ function createKeywords(contacts, synonyms)
     end)
   end
 
+  local useSynonymForPicasaID = prefs.UseSynonymForPicasaID
   local keywords = {}
   local names = getKeywordNames(root)
   local count = 0
+  
   for id, name in pairs(contacts) do
     count = count + 1
   end
+  
+  --[[
   for id, name in pairs(contacts) do
     local n = names[name]
 	if n ~= nil then	
@@ -162,8 +186,8 @@ function createKeywords(contacts, synonyms)
 		
 		-- effectuer une recherche dans tous les enfants de "names" avant de dire qu'il faut créer le contact
 		local child = nil
-		for idChild, childNames in pairs(names) do
-			child = findKeywordName(childNames, name)
+		for idChild, rootNames in pairs(names) do
+			child = findKeywordName(rootNames, name)
 			if child ~= nil then
 				keywords[id] = child	-- on recopie pour l'affectation future
 				contacts[id] = nil		-- on détruit l'objet si on l'a trouvé
@@ -174,11 +198,35 @@ function createKeywords(contacts, synonyms)
 			
 	end
   end
+  ]]
+  
+  if prefs.UseSynonymForPicasaID == true then
+    for idName, rootNames in pairs(names) do
+		child = findKeywordIdInSynonym(rootNames, idName)
+		if child ~= nil then
+			keywords[id] = child	-- on recopie pour l'affectation future
+			contacts[id] = nil		-- on détruit l'objet si on l'a trouvé
+			count = count - 1
+			break
+		end
+	end
+  else
+	for idName, rootNames in pairs(names) do
+		child = findKeywordName(rootNames, name)
+		if child ~= nil then
+			keywords[id] = child	-- on recopie pour l'affectation future
+			contacts[id] = nil		-- on détruit l'objet si on l'a trouvé
+			count = count - 1
+			break
+		end
+	end
+  end
+  
   log:trace("Contacts to be created " .. count)
   if count > 0 then
     cat:withWriteAccessDo(LOC("$$$/Undo/CreateKeywords=Create Keywords for Contacts"), function()
       --local createSynonym = prefs.createSynonym
-      for id, name in pairs(contacts) do
+	  for id, name in pairs(contacts) do
         --[[
 		if createSynonym == true then
           do
@@ -193,8 +241,14 @@ function createKeywords(contacts, synonyms)
           end
         else
 		]]
-          log:trace("Creating Keyword without synonyms " .. name)
+		if useSynonymForPicasaID == true then
+		  local synonymWithID = synonyms[id]
+          log:trace("Creating Keyword without synonymID " .. name .. " / " .. synonymWithID)
+          keywords[id] = cat:createKeyword(name, {synonymWithID}, true, root)
+		else
+		  log:trace("Creating Keyword without synonyms " .. name)
           keywords[id] = cat:createKeyword(name, nil, true, root)
+		end
         --end
       end
     end)
