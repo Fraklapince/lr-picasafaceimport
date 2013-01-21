@@ -17,7 +17,7 @@ log:enable("logfile")
 
 local function PicasaFaceImport()
   progress = LrProgressScope({
-    title = LOC("$$$/Progress/TitlPicasaFaceImportds")
+    title = LOC("$$$/Progress/Title=PicasaFaceImport")
   })
   local folder = getCurrentFolder()	-- on ne passe que dans le folder courant ou le premier de l'arborescense
   LrDialogs.message("on ne parcours que:".. folder:getName() .." <br> on peut envisager de proposer de tout parcourir via un autre menu ou via une checkbox pour les sous dossiers")

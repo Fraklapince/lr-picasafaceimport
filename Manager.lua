@@ -30,6 +30,13 @@ function observer(p, key, value)
       prefs.createSynonym = false
     end
   ]]
+  elseif key == "UseSynonymForPicasaID" then
+    if p.UseSynonymForPicasaID == 1 then
+	  prefs.UseSynonymForPicasaID = true
+	else
+	  prefs.UseSynonymForPicasaID = false
+	end
+
   elseif key == "contactsFile" then
     prefs.contactsFile = value
   end
@@ -53,13 +60,22 @@ return {
       p.createSynonym = "0"
     end
 	]]
+	
+	if prefs.UseSynonymForPicasaID == true then
+	  p.UseSynonymForPicasaID = "1"
+	else
+	  p.UseSynonymForPicasaID = "0"
+	end
+	
     p.contactsFile = prefs.contactsFile
     p:addObserver("rootKeyword", observer)
     --[[
 	p:addObserver("contactsFrom", observer)
     p:addObserver("createSynonym", observer)
 	]]
-    p:addObserver("contactsFile", observer)
+	p:addObserver("UseSynonymForPicasaID", observer)
+	p:addObserver("contactsFile", observer)
+	
     if p.rootKeyword ~= nil then
       log:trace("Preference rootKeyword = " .. p.rootKeyword)
     end
@@ -71,9 +87,13 @@ return {
       log:trace("Preference createSynonym = " .. p.createSynonym)
     end
 	]]
-    if p.contactsFile ~= nil then
+    if p.UseSynonymForPicasaID ~= nil then
+	  log:trace("Preference UseSynonymForPicasaID = " .. p.UseSynonymForPicasaID)
+	end
+	if p.contactsFile ~= nil then
       log:trace("Preference contactsFile = " .. p.contactsFile)
     end
+	
     return {
       {
         title = LOC("$$$/Settings/Title=Settings"),
@@ -139,6 +159,15 @@ return {
           })
         }),
 		]]
+		f:row({
+		  f:checkbox({
+		    title = LOC("$$$/Settings/RadioUseSynonymForPicasaID=Add Picasa contact ID as synonym for possible name update"),
+			value = bind("UseSynonymForPicasaID"),
+			checked_value = "1",
+			unchecked_value = "0"
+		  })
+		}),
+		
         f:row({
           f:static_text({
             title = LOC("$$$/Settings/ContactsFile=Picasa Contacts.xml")
