@@ -31,6 +31,7 @@ local getKeywordNames = function(root)
 end
 
 local function findKeywordName(root, childKeyword)
+	-- PAS DE RECHERCHE RECURSIVE
 	local n = root:getChildren()
 	local childFounded = nil
 	for i = 1, #n do
@@ -43,17 +44,24 @@ local function findKeywordName(root, childKeyword)
 end
 
 local function findKeywordIdInSynonym(root, id)
-	local n = root:getChildren()
 	local childFounded = nil
-	for i = 1, #n do
-		local childSynonym = n[i]:getSynonyms()
-		for j = 1, #childSynonym do
-			if childSynonym[j] == prefs.synonymIdLabelBase .. id then
-				LrDialogs.message( "cherché ".. id .."trouvé: ".. childSynonym[j] )
-				childFounded = n[i]
-			end
+	--LrDialogs.message( "cherché ".. id .. " dans ".. root:getName() .."/ " .. #root:getChildren() )
+	local childSynonym = root:getSynonyms()
+	for j = 1, #childSynonym do
+		--LrDialogs.messageWithDoNotShow( {message="testé ".. childSynonym[j]  .. " avec " .. prefs.synonymIdLabelBase .. id, actionPrefKey="messageDoNotShow" })
+		if childSynonym[j] == prefs.synonymIdLabelBase .. id then
+			--LrDialogs.messageWithDoNotShow( {message="cherché ".. id .." trouvé: ".. childSynonym[j],  actionPrefKey="messageDoNotShow"} )
+			childFounded = root
 		end
 	end
+	
+	local rootChild = root:getChildren()
+	if #rootChild > 0 then
+		for i = 1, #rootChild do
+			findKeywordIdInSynonym(rootChild[i], id)
+		end
+	end
+	
 	return childFounded
 end
 
@@ -107,13 +115,15 @@ function readContacts(contactXMLFile)
 end
 
 function readPicasaIni(folder, keywords)
+  --LrDialogs.message("readPicasaIni: folder ".. folder:getName())
+  
   local path = LrPathUtils.child(folder:getPath(), ".picasa.ini")
   local photos = getPhotos(folder)
   local p = 0
   local pp = #photos
   
   progress = LrProgressScope({
-    title = LOC("$$$/Progress/Title=PicasaFaceImport")
+    title = LOC("$$$/Progress/TitleReadPicasaIni=PicasaFaceImport - readPicasaIni")
   })
   
   progress:setPortionComplete(p, pp)
@@ -145,7 +155,9 @@ function readPicasaIni(folder, keywords)
   file:close()
   end
   progress:setPortionComplete(pp, pp)
-  --file:close()
+  progress:done()
+  
+  return "executed"
 end
 
 function createKeywords(contacts, synonyms)
@@ -199,27 +211,32 @@ function createKeywords(contacts, synonyms)
 	end
   end
   ]]
-  
-  if prefs.UseSynonymForPicasaID == true then
-    for idName, rootNames in pairs(names) do
-		child = findKeywordIdInSynonym(rootNames, idName)
-		if child ~= nil then
-			keywords[id] = child	-- on recopie pour l'affectation future
-			contacts[id] = nil		-- on détruit l'objet si on l'a trouvé
-			count = count - 1
-			break
+  LrDialogs.resetDoNotShowFlag( messageDoNotShow )
+  for id, name in pairs(contacts) do
+	  if prefs.UseSynonymForPicasaID == true then
+		
+		for idName, rootNames in pairs(names) do
+			--LrDialogs.messageWithDoNotShow( {message="UseSynonymForPicasaID ".. id .. " " .. name .. " - " .. rootNames:getName(), info="", actionPrefKey="messageDoNotShow" }  )
+			
+			child = findKeywordIdInSynonym(rootNames, id)
+			if child ~= nil then
+				keywords[id] = child	-- on recopie pour l'affectation future
+				contacts[id] = nil		-- on détruit l'objet si on l'a trouvé
+				count = count - 1
+				break
+			end
 		end
-	end
-  else
-	for idName, rootNames in pairs(names) do
-		child = findKeywordName(rootNames, name)
-		if child ~= nil then
-			keywords[id] = child	-- on recopie pour l'affectation future
-			contacts[id] = nil		-- on détruit l'objet si on l'a trouvé
-			count = count - 1
-			break
+	  else
+		for idName, rootNames in pairs(names) do
+			child = findKeywordName(rootNames, name)
+			if child ~= nil then
+				keywords[id] = child	-- on recopie pour l'affectation future
+				contacts[id] = nil		-- on détruit l'objet si on l'a trouvé
+				count = count - 1
+				break
+			end
 		end
-	end
+	  end
   end
   
   log:trace("Contacts to be created " .. count)
@@ -278,4 +295,100 @@ function getCurrentFolder()
   if photo ~= nil then
     return locateFolder(photo:getFormattedMetadata("folderName"), cat:getFolders())
   end
+end
+
+function readPicasaIniProcess(folder, keywords, subFolderTreatment)
+	cat:withWriteAccessDo(LOC("$$$/Undo/AddKeywords=Add Keywords to Photos"), function()
+		readPicasaIni(folder, keywords)
+	end)
+	
+	if subFolderTreatment == true then
+		local childrens = folder:getChildren()
+		--LrDialogs.message( "nb of child: ".. #childrens)
+		if #childrens > 0 then
+			for i, child in pairs(childrens) do
+				readPicasaIniProcess(child, keywords, subFolderTreatment)
+			end
+		end
+	end
+end
+
+
+function PicasaFaceImport()
+  
+	local progress = LrProgressScope({
+		title = LOC("$$$/Progress/Title=PicasaFaceImport")
+	})
+
+	progress:setCaption(LOC("$$$/Progress/ReadingContacts=Reading Picasa Contacts"))
+	progress:setPortionComplete(1,3)
+	local contacts, synonyms = readContacts(contactsFile)
+
+	progress:setCaption(LOC("$$$/Progress/CreateKeywords=Creating Keyword for Contacts"))
+	progress:setPortionComplete(2,3)
+	local keywords = createKeywords(contacts, synonyms)
+
+	synonyms = nil
+	progress:setCaption(LOC("$$$/Progress/AddKeywords=Adding Keywords to Photos"))
+	progress:setPortionComplete(3,3)
+  
+	if prefs.typeOfImport == "CurrentFolder" then
+		-- si enabledWhen = "photosSelected" dans Info.lua, LrLibraryMenuItems argument
+		local folder = getCurrentFolder()	-- on ne passe que dans le folder courant ou le premier de l'arborescense
+		
+		--LrDialogs.message( "Import from ".. folder:getName())
+		
+		--LrDialogs.message("Idee", "on ne parcours que:".. folder:getName() .." \r\n" .. "On peut envisager de proposer de tout parcourir via un autre menu ou via une checkbox pour les sous dossiers", "info")
+		readPicasaIniProcess(folder, keywords, false)
+		
+	elseif prefs.typeOfImport == "SelectedFolder" then
+		local folder = LrApp.activeCatalog():getActiveSources()
+		local subFolderTreatment = false
+		
+		for i, folderElem in pairs( folder ) do
+			if folderElem:type() == "LrFolder" then
+				local childrens = folderElem:getChildren()
+				if #childrens > 0 then
+					local ret = LrDialogs.confirm(LOC("$$$/Message/SubFolderExistTitle=subfolder detection"), LOC("$$$/Message/SubFolderExist=One of the selected folder have subfolder(s) \r\ninclude them in the import faces process ?"), LOC("$$$/Message/Yes=Yes"), LOC("$$$/Message/No=No"))
+					--LrDialogs.message( "Rte = ".. ret)
+					if ret == "ok" then
+						subFolderTreatment = true
+					end
+					break
+				end
+			end
+		end
+		
+		
+			
+		for i, folderElem in pairs( folder ) do
+			--LrDialogs.message( "folderElem:type() ".. folderElem:type())
+			
+			if folderElem:type() == "LrFolder" then
+				--LrDialogs.message( "Import from ".. folderElem:getName() ..": ".. folderElem:getPath() .." - subfolderTreatment ".. tostring(subFolderTreatment))
+				readPicasaIniProcess(folderElem, keywords, subFolderTreatment)
+			end
+		end
+	end
+	prefs.typeOfImport = nil
+	
+	progress:done()
+  
+	return "executed"
+  
+end
+-----------------------------------------------------------------
+-- General LUA functions
+
+function dump(o)
+	if type(o) == 'table' then
+		local s = '{ '
+		for k,v in pairs(o) do
+			if type(k) ~= 'number' then k = '"'..k..'"' end
+			s = s .. '['..k..'] = ' .. dump(v) .. ','
+		end
+		return s .. '} '
+	else
+		return tostring(o)
+	end
 end

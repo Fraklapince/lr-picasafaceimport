@@ -32,6 +32,7 @@
 "$$$/Undo/AddKeywords=Add Keywords to Photos"
 
 "$$$/Progress/Title=PicasaFaceImport"
+"$$$/Progress/TitleReadPicasaIni=PicasaFaceImport - readPicasaIni"
 "$$$/Progress/ReadingContacts=Reading Picasa Contacts"
 "$$$/Progress/CreateKeywords=Creating Keyword for Contacts"
 "$$$/Progress/AddKeywords=Adding Keywords to Photos"

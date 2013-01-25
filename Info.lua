@@ -3,10 +3,14 @@ return {
   LrPluginInfoProvider = "Manager.lua",
   LrLibraryMenuItems = {
     {
-      title = "$$$/Menu/Library=Import from Folder of Selected Photo",
+      title = "$$$/Menu/Library=Import Faces for Photo selected Folder only",
       file = "Import.lua",
-      enabledWhen = "photosSelected"
-    }
+	  enabledWhen = "photosSelected"
+    },
+	{
+	  title = "$$$/Menu/Library=Import Faces for selected Folder(s)",
+      file = "ImportFolder.lua"
+	}
   },
   LrHelpMenuItems = {
     {
@@ -17,7 +21,7 @@ return {
   LrPluginName = "$$$/Menu/PluginNameDebug=PicasaFaceImport",
   LrSdkVersion = 3,
   LrSdkMinimumVersion = 1.3,
-  LrToolkitIdentifier = "com.mybyways.PicasaFaceImport",
+  LrToolkitIdentifier = "com.google.code.mybyways.p.lr-picasafaceimport",
   LrPluginInfoUrl = "http://code.google.com/p/lr-picasafaceimport/",
   VERSION = {
     major = 1,
