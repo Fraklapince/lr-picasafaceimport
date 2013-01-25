@@ -32,9 +32,9 @@ function init()
     }
     for i = 1, #find do
       local f = LrPathUtils.child(home, find[i])
-	  LrDialogs.message("Try ".. f)
+	  --LrDialogs.message("Try ".. f)
       if LrFileUtils.exists(f) == "file" then
-        LrDialogs.message("Found ".. f)
+        --LrDialogs.message("Found ".. f)
 		prefs.contactsFile = f
         break
       end

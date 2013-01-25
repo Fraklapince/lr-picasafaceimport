@@ -23,6 +23,6 @@ if contactsFile == nil or contactsFile == "" then
   end
 else
   log:trace("Start PicasaFaceImport - SelectedFolder")
-  prefs.typeOfImport = "CurrentFolder"
+  prefs.typeOfImport = "SelectedFolder"
   LrTasks.startAsyncTask(PicasaFaceImport)
 end
