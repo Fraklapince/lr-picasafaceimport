@@ -315,7 +315,7 @@ end
 
 
 function PicasaFaceImport()
-  
+	
 	local progress = LrProgressScope({
 		title = LOC("$$$/Progress/Title=PicasaFaceImport")
 	})
