@@ -10,31 +10,41 @@ local LrLogger = import("LrLogger")
 local log = LrLogger("libraryLogger")
 log:enable("logfile")
 
-function observer(p, key, value)
+function observer(propertyTable, key, value)
+  
   log:trace("Setting key " .. key .. " = " .. value)
   if key == "rootKeyword" then
     prefs.rootKeyword = value
   --[[
   elseif key == "contactsFrom" then
     if value == "nickname" then
-      p.createSynonymText = LOC("$$$/Settings/SynonymName=Use Contact Name as Keyword Synonym")
+      propertyTable.createSynonymText = LOC("$$$/Settings/SynonymName=Use Contact Name as Keyword Synonym")
       prefs.contactsFromNickname = true
     else
-      p.createSynonymText = LOC("$$$/Settings/SynonymNickname=Use Contact Nickname as Keyword Synonym")
+      propertyTable.createSynonymText = LOC("$$$/Settings/SynonymNickname=Use Contact Nickname as Keyword Synonym")
       prefs.contactsFromNickname = false
     end
   elseif key == "createSynonym" then
-    if p.createSynonym == "1" then
+    if propertyTable.createSynonym == "1" then
       prefs.createSynonym = true
     else
       prefs.createSynonym = false
     end
   ]]
   elseif key == "UseSynonymForPicasaID" then
-    if p.UseSynonymForPicasaID == 1 then
+    if propertyTable.UseSynonymForPicasaID == "1" then
 	  prefs.UseSynonymForPicasaID = true
 	else
 	  prefs.UseSynonymForPicasaID = false
+	end
+	LrDialogs.message("prefs.UseSynonymForPicasaID :".. tostring(prefs.UseSynonymForPicasaID))
+	
+  elseif key == "ImportBackgroudScanKey" then
+    --if propertyTable.ImportBackgroudScanKey == "1" then	-- identique à if value == "1" then
+	if value == "1" then
+	  prefs.ImportBackgroudScan = true
+	else
+	  prefs.ImportBackgroudScan = false
 	end
 
   elseif key == "contactsFile" then
@@ -43,115 +53,126 @@ function observer(p, key, value)
 end
 
 return {
-  sectionsForTopOfDialog = function(f, p)
+  sectionsForTopOfDialog = function(viewFactory, propertyTable)
     log:trace("Create view start")
-    p.rootKeyword = prefs.rootKeyword
+    
+	propertyTable.rootKeyword = prefs.rootKeyword
     --[[
 	if prefs.contactsFromNickname == true then
-      p.contactsFrom = "nickname"
-      p.createSynonymText = LOC("$$$/Settings/SynonymName=Use Contact Name as Keyword Synonym")
+      propertyTable.contactsFrom = "nickname"
+      propertyTable.createSynonymText = LOC("$$$/Settings/SynonymName=Use Contact Name as Keyword Synonym")
     else
-      p.contactsFrom = "name"
-      p.createSynonymText = LOC("$$$/Settings/SynonymNickname=Use Contact Nickname as Keyword Synonym")
+      propertyTable.contactsFrom = "name"
+      propertyTable.createSynonymText = LOC("$$$/Settings/SynonymNickname=Use Contact Nickname as Keyword Synonym")
     end
     if prefs.createSynonym == true then
-      p.createSynonym = "1"
+      propertyTable.createSynonym = "1"
     else
-      p.createSynonym = "0"
+      propertyTable.createSynonym = "0"
     end
 	]]
 	
 	if prefs.UseSynonymForPicasaID == true then
-	  p.UseSynonymForPicasaID = "1"
+	  propertyTable.UseSynonymForPicasaID = "1"
 	else
-	  p.UseSynonymForPicasaID = "0"
+	  propertyTable.UseSynonymForPicasaID = "0"
 	end
+	LrDialogs.message("UseSynonymForPicasaID ".. propertyTable.UseSynonymForPicasaID .." / ".. tostring(prefs.UseSynonymForPicasaID))
 	
-    p.contactsFile = prefs.contactsFile
-    p:addObserver("rootKeyword", observer)
+	if prefs.ImportBackgroudScan == true then
+	  propertyTable.ImportBackgroudScanKey = "1"
+	else
+	  propertyTable.ImportBackgroudScanKey = "0"
+	end
+	LrDialogs.message("ImportBackgroudScanKey ".. propertyTable.ImportBackgroudScanKey)
+	
+    propertyTable.contactsFile = prefs.contactsFile
+	
+    propertyTable:addObserver("rootKeyword", observer)
     --[[
-	p:addObserver("contactsFrom", observer)
-    p:addObserver("createSynonym", observer)
+	propertyTable:addObserver("contactsFrom", observer)
+    propertyTable:addObserver("createSynonym", observer)
 	]]
-	p:addObserver("UseSynonymForPicasaID", observer)
-	p:addObserver("contactsFile", observer)
-	
-    if p.rootKeyword ~= nil then
-      log:trace("Preference rootKeyword = " .. p.rootKeyword)
+	propertyTable:addObserver("UseSynonymForPicasaID", observer)
+	propertyTable:addObserver("contactsFile", observer)
+	propertyTable:addObserver("ImportBackgroudScanKey", observer)
+		
+    if propertyTable.rootKeyword ~= nil then
+      log:trace("Preference rootKeyword = " .. propertyTable.rootKeyword)
     end
 	--[[
-	if p.contactsFrom ~= nil then
-      log:trace("Preference contactsFrom = " .. p.contactsFrom)
+	if propertyTable.contactsFrom ~= nil then
+      log:trace("Preference contactsFrom = " .. propertyTable.contactsFrom)
     end
-    if p.createSynonym ~= nil then
-      log:trace("Preference createSynonym = " .. p.createSynonym)
+    if propertyTable.createSynonym ~= nil then
+      log:trace("Preference createSynonym = " .. propertyTable.createSynonym)
     end
 	]]
-    if p.UseSynonymForPicasaID ~= nil then
-	  log:trace("Preference UseSynonymForPicasaID = " .. p.UseSynonymForPicasaID)
+    if propertyTable.UseSynonymForPicasaID ~= nil then
+	  log:trace("Preference UseSynonymForPicasaID = " .. propertyTable.UseSynonymForPicasaID)
 	end
-	if p.contactsFile ~= nil then
-      log:trace("Preference contactsFile = " .. p.contactsFile)
+	if propertyTable.contactsFile ~= nil then
+      log:trace("Preference contactsFile = " .. propertyTable.contactsFile)
     end
 	
     return {
       {
         title = LOC("$$$/Settings/Title=Settings"),
-        bind_to_object = p,
+        bind_to_object = propertyTable,
         synopsis = LrView.bind({
           key = "rootKeyword",
           transform = function(value, from)
-            return LOC("$$$/Settings/Synopsis=Root Keyword ^1", p.rootKeyword)
+            return LOC("$$$/Settings/Synopsis=Root Keyword ^1", propertyTable.rootKeyword)
           end
         }),
-        f:row({
-          f:static_text({
+        viewFactory:row({
+          viewFactory:static_text({
             title = LOC("$$$/Settings/Instructions=To use PicasaFaceImport, select a photo and choose the menu item^r Library > Plug-in Extras > Import from Folder of Selected Photo^r^rPicasaFaceImport will:^r  1. Read the Contacts list from Picasa's Contacts.xml file,^r  2. Create a Keyword for each contact, under a Root Keyword defined below,^r  3. Read 'faces' metadata from .picasa.ini, located in the folder of the selected Photo,^r  5. Add contact Keywords to all Photos in the folder of the Selected Photo."),
             height_in_lines = 1.2
           })
         }),
-        f:row({
-          f:static_text({
+        viewFactory:row({
+          viewFactory:static_text({
             title = LOC("$$$/Settings/RootKeyword=Root Keyword Name ")
           }),
-          f:edit_field({
+          viewFactory:edit_field({
             value = bind("rootKeyword"),
             fill_horizontal = 1,
             validate = function(view, value)
               log:trace("Validate Keyword " .. value)
-              --p.contactsFromNickname = not contactsFromNickname
+              --propertyTable.contactsFromNickname = not contactsFromNickname
               value = LrStringUtils.trimWhitespace(value)
               if value == nil or value == "" then
-                return false, p.rootKeyword, LOC("$$$/Error/RootKeywordEmpty=The Root Keyword Tag cannot be empty.")
+                return false, propertyTable.rootKeyword, LOC("$$$/Error/RootKeywordEmpty=The Root Keyword Tag cannot be empty.")
               end
               if string.find(value, "[%c%*;,]+") ~= nil then
-                return false, p.rootKeyword, LOC("$$$/Error/RootKeywordChars=The Keyword cannot contain a semicolon (;), comma (,), asterisk (*) or start or end with whitespace.")
+                return false, propertyTable.rootKeyword, LOC("$$$/Error/RootKeywordChars=The Keyword cannot contain a semicolon (;), comma (,), asterisk (*) or start or end with whitespace.")
               end
               return true, value
             end
           })
         }),
         --[[
-		f:row({
-          f:radio_button({
+		viewFactory:row({
+          viewFactory:radio_button({
             title = LOC("$$$/Settings/RadioNickname=Use Contact Nickname as Keyword Name"),
             value = bind("contactsFrom"),
             checked_value = "nickname"
           }),
-          f:spacer({
-            width = f:control_spacing()
+          viewFactory:spacer({
+            width = viewFactory:control_spacing()
           }),
-          f:radio_button({
+          viewFactory:radio_button({
             title = LOC("$$$/Settings/RadioName=Use Contact Name as Keyword Name"),
             value = bind("contactsFrom"),
             checked_value = "name"
           })
         }),
-        f:row({
-          f:spacer({
-            width = f:control_spacing()
+        viewFactory:row({
+          viewFactory:spacer({
+            width = viewFactory:control_spacing()
           }),
-          f:checkbox({
+          viewFactory:checkbox({
             title = bind("createSynonymText"),
             value = bind("createSynonym"),
             checked_value = "1",
@@ -159,32 +180,41 @@ return {
           })
         }),
 		]]
-		f:row({
-		  f:checkbox({
-		    title = LOC("$$$/Settings/RadioUseSynonymForPicasaID=Add Picasa contact ID as synonym for possible name update"),
+		viewFactory:row({
+		  viewFactory:checkbox({
+		    title = LOC("$$$/Settings/RadioUseSynonymForPicasaID=Add Picasa contact ID as synonym for possible Lightroom name update"),
 			value = bind("UseSynonymForPicasaID"),
 			checked_value = "1",
 			unchecked_value = "0"
 		  })
 		}),
 		
-        f:row({
-          f:static_text({
+		viewFactory:row({
+		  viewFactory:checkbox({
+		    title = LOC("$$$/Settings/RadioImportBackgroudScan=Detect Import and request for Face Import"),
+			value = bind("ImportBackgroudScanKey"),
+			checked_value = "1",
+			unchecked_value = "0"
+		  })
+		}),
+		
+        viewFactory:row({
+          viewFactory:static_text({
             title = LOC("$$$/Settings/ContactsFile=Picasa Contacts.xml")
           }),
-          f:edit_field({
+          viewFactory:edit_field({
             value = bind("contactsFile"),
             fill_horizontal = 1,
             validate = function(view, value)
               if LrFileUtils.exists(value) ~= "file" then
                 log:trace("File not found " .. LrFileUtils.exists(value))
-                return false, p.contactsFile, LOC("$$$/Error/ContactsNotFoundTitle=Contacts.xml File Not Found!")
+                return false, propertyTable.contactsFile, LOC("$$$/Error/ContactsNotFoundTitle=Contacts.xml File Not Found!")
               end
               log:trace("File found " .. LrFileUtils.exists(value))
               return true, value
             end
           }),
-          f:push_button({
+          viewFactory:push_button({
             title = LOC("$$$/Settings/ContactsFileBrowse=^."),
             action = function(button)
               local f = LrDialogs.runOpenPanel({
@@ -193,26 +223,26 @@ return {
                 canChooseDirectories = false,
                 allowsMultipleSelection = false,
                 fileTypes = "xml",
-                initialDirectory = p.contactsFile
+                initialDirectory = propertyTable.contactsFile
               })
               if #f == 1 then
-                p.contactsFile = f[1]
-                log:trace("Setting text p.contactsFile = " .. f[1])
+                propertyTable.contactsFile = f[1]
+                log:trace("Setting text propertyTable.contactsFile = " .. f[1])
               end
             end
           })
         }),
-        f:row({
-          f:push_button({
+        viewFactory:row({
+          viewFactory:push_button({
             title = LOC("$$$/Settings/Reset=Reset to default"),
             place_horizontal = 1,
             action = function(button)
-              p.rootKeyword = LOC("$$$/Prefs/DefaultRootKeyword=Contacts")
+              propertyTable.rootKeyword = LOC("$$$/Prefs/DefaultRootKeyword=Contacts")
               --[[
-			  p.contactsFrom = "nickname"
-              p.createSynonym = "1"
+			  propertyTable.contactsFrom = "nickname"
+              propertyTable.createSynonym = "1"
 			  ]]
-              p.contactsFile = nil
+              propertyTable.contactsFile = nil
               local home = LrPathUtils.getStandardFilePath("home")
 			  local find = {
 				LOC("$$$/Prefs/ContactsFile1=Local Settings/Application Data/GooglePicasa2/contacts/contacts.xml"),
@@ -221,9 +251,9 @@ return {
 				LOC("$$$/Prefs/ContactsFile4=Library/Application Support/Google/Picasa3/contacts/contacts.xml")
 			  }
               for i = 1, #find do
-                local f = LrPathUtils.child(home, find[i])
-                if LrFileUtils.exists(f) == "file" then
-                  p.contactsFile = f
+                local file = LrPathUtils.child(home, find[i])
+                if LrFileUtils.exists(file) == "file" then
+                  propertyTable.contactsFile = file
                   break
                 end
               end
