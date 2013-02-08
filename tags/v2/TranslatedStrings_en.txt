@@ -1,0 +1,38 @@
+﻿"$$$/Menu/PluginName=PicasaFaceImport"
+"$$$/Menu/PluginNameDebug=PicasaFaceImport (Debug)"
+"$$$/Menu/Library=Import from Folder of Selected Photo"
+"$$$/Menu/Help=PicasaFaceImport On-Line Help..."
+
+"$$$/Prefs/DefaultRootKeyword=Contacts"
+"$$$/Prefs/ContactsFile1=Local Settings\Application Data\Google\Picasa2\contacts\contacts.xml"
+"$$$/Prefs/ContactsFile2=AppData\Local\Google\Picasa2\contacts\contacts.xml"
+"$$$/Prefs/ContactsFile3=Library/Application Support/Google/Picasa2/contacts/contacts.xml"
+"$$$/Prefs/ContactsFile4=Library/Application Support/Google/Picasa3/contacts/contacts.xml"
+
+"$$$/Error/ContactsNotFoundTitle=Contacts.xml File Not Found!"
+"$$$/Error/ContactsNotFoundText=PicasaFaceImport could not find Picasa's Contacts.xml.^r^rUse the Plug-in Manager to configure the location of this file."
+
+"$$$/Error/RootKeywordEmpty=The Root Keyword Tag cannot be empty."
+"$$$/Error/RootKeywordChars=The Keyword cannot contain a semicolon (;), comma (,), asterisk (*) or start or end with whitespace."
+
+"$$$/Settings/Title=Settings"
+"$$$/Settings/Synopsis=Root Keyword '^1'"
+"$$$/Settings/Instructions=To use PicasaFaceImport, select a photo and choose the menu item^r Library > Plug-in Extras > Import from Folder of Selected Photo^r^rPicasaFaceImport will:^r  1. Read the Contacts list from Picasa's Contacts.xml file,^r  2. Create a Keyword for each contact, under a Root Keyword defined below,^r  3. Read 'faces' metadata from .picasa.ini, located in the folder of the selected Photo,^r  5. Add contact Keywords to all Photos in the folder of the Selected Photo."
+"$$$/Settings/RootKeyword=Root Keyword Name "
+"$$$/Settings/RadioName=Use Contact Name as Keyword Name"
+"$$$/Settings/RadioNickname=Use Contact Nickname as Keyword Name"
+"$$$/Settings/SynonymName=Use Contact Name as Keyword Synonym"
+"$$$/Settings/SynonymNickname=Use Contact Nickname as Keyword Synonym"
+"$$$/Settings/ContactsFile=Picasa Contacts.xml"
+"$$$/Settings/ContactsFileBrowse=^."
+"$$$/Settings/Reset=Reset to default"
+
+"$$$/Undo/CreateRootKeyword=Create Root Keyword '^1'"
+"$$$/Undo/CreateKeywords=Create Keywords for Contacts"
+"$$$/Undo/AddKeywords=Add Keywords to Photos"
+
+"$$$/Progress/Title=PicasaFaceImport"
+"$$$/Progress/TitleReadPicasaIni=PicasaFaceImport - readPicasaIni"
+"$$$/Progress/ReadingContacts=Reading Picasa Contacts"
+"$$$/Progress/CreateKeywords=Creating Keyword for Contacts"
+"$$$/Progress/AddKeywords=Adding Keywords to Photos"
