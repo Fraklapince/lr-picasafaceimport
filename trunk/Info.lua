@@ -2,19 +2,19 @@ return {
   LrInitPlugin = "Init.lua",
   LrPluginInfoProvider = "Manager.lua",
   LrLibraryMenuItems = {
-    {
-      title = "$$$/Menu/LibraryFolderOnly=Import Faces for Photo selected Folder only",
-      file = "Import.lua",
-	  enabledWhen = "photosSelected"
-    },
+    --[[{
+      title = "$$$/Menu/SelectedPhotos=Import Faces for selected Photo(s)",
+      file = "Import.lua"
+	  , enabledWhen = "anythingSelected"
+    },]]
 	{
-	  title = "$$$/Menu/LibrarySelectedFolder=Import Faces for selected Folder(s)",
+	  title = "$$$/Menu/SelectedFolder=Import Faces for selected Folder(s)",
       file = "ImportFolder.lua"
-	},
+	}--[[,
 	{
-	  title = "$$$/Menu/LibraryTest=Test",
+	  title = "$$$/Menu/Test=Test",
       file = "Test.lua"
-	}
+	}]]
   },
   LrHelpMenuItems = {
     {

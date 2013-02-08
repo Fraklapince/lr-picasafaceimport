@@ -332,44 +332,84 @@ function PicasaFaceImport()
 	progress:setCaption(LOC("$$$/Progress/AddKeywords=Adding Keywords to Photos"))
 	progress:setPortionComplete(3,3)
   
-	if prefs.typeOfImport == "CurrentFolder" then
+	if prefs.typeOfImport == "SelectedPhotos" then
 		-- si enabledWhen = "photosSelected" dans Info.lua, LrLibraryMenuItems argument
 		local folder = getCurrentFolder()	-- on ne passe que dans le folder courant ou le premier de l'arborescense
-		
-		--LrDialogs.message( "Import from ".. folder:getName())
+		local selectedPhotos = LrApp.activeCatalog():getMultipleSelectedOrAllPhotos()
+		LrDialogs.message("selected #".. #selectedPhotos)
 		
 		--LrDialogs.message("Idee", "on ne parcours que:".. folder:getName() .." \r\n" .. "On peut envisager de proposer de tout parcourir via un autre menu ou via une checkbox pour les sous dossiers", "info")
 		readPicasaIniProcess(folder, keywords, false)
 		
-	elseif prefs.typeOfImport == "SelectedFolder" then
+	elseif prefs.typeOfImport == "SelectedFolders" then
 		local folder = LrApp.activeCatalog():getActiveSources()
 		local subFolderTreatment = false
+		local atLeastOneFolderSelected = false;
+		local FolderList = {}
+		local FolderListNb = 1;
+		
+		--LrDialogs.message("selected folder: ".. #folder)
+		
+		--[[
+		-- selon qu'une seule photo est selectionné, on peut prendre 1 methode, sinon, l'autre
+		LrDialogs.message("selected getTargetPhoto:".. #LrApp.activeCatalog():getTargetPhoto())	-- selected photo(1) or all
+		LrDialogs.message("selected getTargetPhotos:".. #LrApp.activeCatalog():getTargetPhotos())	-- selected photo(s) or all
+		LrDialogs.message("selected getMultipleSelectedOrAllPhotos:".. #LrApp.activeCatalog():getMultipleSelectedOrAllPhotos())	-- more than one photo selected or all
+		-- tester catalog:setSelectedPhotos( activePhoto, otherSelectedPhotos ) pour déselectionner et traiter avec 
+		]]
 		
 		for i, folderElem in pairs( folder ) do
+			--LrDialogs.message("type: ".. folderElem:type())
 			if folderElem:type() == "LrFolder" then
-				local childrens = folderElem:getChildren()
-				if #childrens > 0 then
-					local ret = LrDialogs.confirm(LOC("$$$/Message/SubFolderExistTitle=subfolder detection"), LOC("$$$/Message/SubFolderExist=One of the selected folder have subfolder(s) \r\ninclude them in the import faces process ?"), LOC("$$$/Message/Yes=Yes"), LOC("$$$/Message/No=No"))
-					--LrDialogs.message( "Rte = ".. ret)
-					if ret == "ok" then
-						subFolderTreatment = true
-					end
-					break
+				--LrDialogs.message("#FolderList: ".. #FolderList)
+				FolderList[#FolderList+1] = folderElem
+				--LrDialogs.message("#FolderList: ".. #FolderList .."/".. FolderListNb)
+				
+				if #folderElem:getChildren() > 0 then
+					atLeastOneFolderSelected = true
+					--break
 				end
 			end
 		end
 		
+		if #FolderList > 0 then
 		
+			local MessageTitle = #FolderList .." ".. LOC("$$$/Message/FolderSelected=Folder selected")
+			local Message = ""
 			
-		for i, folderElem in pairs( folder ) do
-			--LrDialogs.message( "folderElem:type() ".. folderElem:type())
+			for i, folderElem in pairs( FolderList ) do
+				Message = Message .."\t".. folderElem:getName() .."\r"
+			end
 			
-			if folderElem:type() == "LrFolder" then
-				--LrDialogs.message( "Import from ".. folderElem:getName() ..": ".. folderElem:getPath() .." - subfolderTreatment ".. tostring(subFolderTreatment))
+			if true == atLeastOneFolderSelected then
+				Message = Message .."\r".. LOC("$$$/Message/SubFolderExist=One of the selected folder have subfolder(s) \r\ninclude them in the import faces process ?")
+				local ret = LrDialogs.confirm(MessageTitle .. LOC("$$$/Message/SubFolderExistTitle= with subfolder detected"), Message, LOC("$$$/Message/Yes=Yes"), LOC("$$$/Message/No=No"))
+				--LrDialogs.message( "Rte = ".. ret)
+				if ret == "ok" then
+					subFolderTreatment = true
+				end				
+			else
+				LrDialogs.message(MessageTitle, Message)
+			end
+					
+			--[[
+			for i, folderElem in pairs( folder ) do
+				--LrDialogs.message( "folderElem:type() ".. folderElem:type())
+				
+				if folderElem:type() == "LrFolder" then
+					--LrDialogs.message( "Import from ".. folderElem:getName() ..": ".. folderElem:getPath() .." - subfolderTreatment ".. tostring(subFolderTreatment))
+					readPicasaIniProcess(folderElem, keywords, subFolderTreatment)
+				end
+			end
+			]]
+			for i, folderElem in pairs( FolderList ) do
 				readPicasaIniProcess(folderElem, keywords, subFolderTreatment)
 			end
+		else
+			LrDialogs.message(LOC("$$$/Message/NoFolderSelected=No Folder selected"))
 		end
 	end
+	
 	prefs.typeOfImport = nil
 	
 	progress:done()
@@ -389,6 +429,6 @@ function dump(o)
 		end
 		return s .. '} '
 	else
-		return tostring(o)
+		return type(o) ..':'.. tostring(o)
 	end
 end

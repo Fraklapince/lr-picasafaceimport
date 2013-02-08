@@ -77,14 +77,14 @@ return {
 	else
 	  propertyTable.UseSynonymForPicasaID = "0"
 	end
-	LrDialogs.message("UseSynonymForPicasaID ".. propertyTable.UseSynonymForPicasaID .." / ".. tostring(prefs.UseSynonymForPicasaID))
+	--LrDialogs.message("UseSynonymForPicasaID ".. propertyTable.UseSynonymForPicasaID .." / ".. tostring(prefs.UseSynonymForPicasaID))
 	
 	if prefs.ImportBackgroudScan == true then
 	  propertyTable.ImportBackgroudScanKey = "1"
 	else
 	  propertyTable.ImportBackgroudScanKey = "0"
 	end
-	LrDialogs.message("ImportBackgroudScanKey ".. propertyTable.ImportBackgroudScanKey)
+	--LrDialogs.message("ImportBackgroudScanKey ".. propertyTable.ImportBackgroudScanKey)
 	
     propertyTable.contactsFile = prefs.contactsFile
 	
