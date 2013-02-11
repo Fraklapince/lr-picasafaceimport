@@ -345,6 +345,15 @@ function PicasaFaceImport()
 		
 		--LrDialogs.message("Idee", "on ne parcours que:".. folder:getName() .." \r\n" .. "On peut envisager de proposer de tout parcourir via un autre menu ou via une checkbox pour les sous dossiers", "info")
 		readPicasaIniProcess(folder, keywords, false)
+	elseif prefs.typeOfImport == "Import" then
+	
+		if #LrApp.activeCatalog():getTargetPhoto() >=	-- ==1 OR All
+			#LrApp.activeCatalog():getMultipleSelectedOrAllPhotos() 	-- >1 OR All
+		then
+			LrDialogs.message("Detect ".. #LrApp.activeCatalog():getTargetPhoto() .." New Photos - 0")
+		else
+			LrDialogs.message("Detect ".. #LrApp.activeCatalog():getMultipleSelectedOrAllPhotos() .." New Photos - 1")
+		end
 		
 	elseif prefs.typeOfImport == "SelectedFolders" then
 		local folder = LrApp.activeCatalog():getActiveSources()
