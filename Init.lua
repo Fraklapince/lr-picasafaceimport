@@ -77,7 +77,9 @@ function BackgroundVerifyImport()
 
 		local previousImportPhotos = 0
 		
-		if #cat:getTargetPhoto() >=	-- ==1 OR All
+		-- http://feedback.photoshop.com/photoshop_family/topics/lightroom_sdk_add_function_to_get_a_list_of_photos_in_the_filmstrip
+		
+		if #cat:getTargetPhoto() >=	-- ==1 OR nill
 			#cat:getMultipleSelectedOrAllPhotos() 	-- >1 OR All
 		then
 			previousImportPhotos = #cat:getTargetPhoto()
