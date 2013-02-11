@@ -1,2 +1,2 @@
 local LrHttp = import("LrHttp")
-LrHttp.openUrlInBrowser("http://sites.google.com/site/mybyways/PicasaFaceImport/help")
+LrHttp.openUrlInBrowser("http://code.google.com/p/lr-picasafaceimport/")
