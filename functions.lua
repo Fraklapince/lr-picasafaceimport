@@ -157,7 +157,8 @@ function readPicasaIni(folder, keywords)
   progress:setPortionComplete(pp, pp)
   progress:done()
   
-  return "executed"
+  --return "executed"
+  return p
 end
 
 function createKeywords(contacts, synonyms)
@@ -298,8 +299,10 @@ function getCurrentFolder()
 end
 
 function readPicasaIniProcess(folder, keywords, subFolderTreatment)
+	local lNbOfFaceDetected = 0
+	
 	cat:withWriteAccessDo(LOC("$$$/Undo/AddKeywords=Add Keywords to Photos"), function()
-		readPicasaIni(folder, keywords)
+		lNbOfFaceDetected = lNbOfFaceDetected + readPicasaIni(folder, keywords)
 	end)
 	
 	if subFolderTreatment == true then
@@ -307,10 +310,12 @@ function readPicasaIniProcess(folder, keywords, subFolderTreatment)
 		--LrDialogs.message( "nb of child: ".. #childrens)
 		if #childrens > 0 then
 			for i, child in pairs(childrens) do
-				readPicasaIniProcess(child, keywords, subFolderTreatment)
+				lNbOfFaceDetected = lNbOfFaceDetected + readPicasaIniProcess(child, keywords, subFolderTreatment)
 			end
 		end
 	end
+	
+	return lNbOfFaceDetected
 end
 
 
@@ -373,7 +378,7 @@ function PicasaFaceImport()
 		end
 		
 		if #FolderList > 0 then
-		
+			local lNbOfFaceDetected = 0
 			local MessageTitle = #FolderList .." ".. LOC("$$$/Message/FolderSelected=Folder selected")
 			local Message = ""
 			
@@ -403,8 +408,10 @@ function PicasaFaceImport()
 			end
 			]]
 			for i, folderElem in pairs( FolderList ) do
-				readPicasaIniProcess(folderElem, keywords, subFolderTreatment)
+				lNbOfFaceDetected = lNbOfFaceDetected + readPicasaIniProcess(folderElem, keywords, subFolderTreatment)
 			end
+			
+			LrDialogs.message(lNbOfFaceDetected .." ".. LOC("$$$/Message/FacesDetected=Face(s) detected"))
 		else
 			LrDialogs.message(LOC("$$$/Message/NoFolderSelected=No Folder selected"))
 		end

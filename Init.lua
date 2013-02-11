@@ -68,22 +68,37 @@ local prefs = import("LrPrefs").prefsForPlugin()
 function BackgroundVerifyImport()
 	while true do
 		--LrDialogs.message(cat.kPreviousImport)
+		
 		if true == cat:setActiveSources(cat.kPreviousImport) then
 			--LrDialogs.message("1")
 		else
 			--LrDialogs.message("0")
 		end
 
-		local previousImportPhotos = cat:getMultipleSelectedOrAllPhotos()
-
-		--LrDialogs.message("Nb Of Photos ".. #previousImportPhotos)
+		local previousImportPhotos = 0
 		
-		prefs.previousImportElementNb = #previousImportPhotos
+		if #cat:getTargetPhoto() >=	-- ==1 OR All
+			#cat:getMultipleSelectedOrAllPhotos() 	-- >1 OR All
+		then
+			previousImportPhotos = #cat:getTargetPhoto()
+		else
+			previousImportPhotos = #cat:getMultipleSelectedOrAllPhotos()
+		end
+		
+
+		LrDialogs.message("Nb Of Photos 1 ".. previousImportPhotos .."/".. #cat:getTargetPhoto() .."-".. #cat:getMultipleSelectedOrAllPhotos())
+		LrDialogs.message("photo ".. cat:getMultipleSelectedOrAllPhotos()[1].localIdentifier)
+		cat:setSelectedPhotos(cat:getMultipleSelectedOrAllPhotos()[1], {})
+		LrDialogs.message("Nb Of Photos 2 ".. previousImportPhotos .."/".. #cat:getTargetPhoto() .."-".. #cat:getMultipleSelectedOrAllPhotos())
+		
+		prefs.previousImportElementNb = previousImportPhotos
 		
 		LrTasks.sleep(10)
 	end
 end
 
+LrDialogs.message("init")
 if prefs.ImportBackgroudScan then
+	LrDialogs.message("checked")
 	LrTasks.startAsyncTask(BackgroundVerifyImport) 
 end
