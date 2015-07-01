@@ -1,0 +1,1 @@
+A Lightroom plugin to import faces detection from Google Picasa
